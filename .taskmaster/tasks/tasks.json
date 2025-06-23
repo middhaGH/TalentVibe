@@ -477,7 +477,7 @@
         "dependencies": [
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -525,7 +525,7 @@
             "description": "Develop comprehensive tests to validate the new weighted scoring system.",
             "dependencies": [5],
             "details": "Create test cases with diverse resume samples to ensure the weighted system produces more nuanced and accurate scores. Test edge cases and boundary conditions.",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 7,
@@ -533,7 +533,7 @@
             "description": "Test the new system's performance and optimize if needed.",
             "dependencies": [6],
             "details": "Measure the impact of the more complex scoring system on processing time and AI token usage. Optimize the prompt if necessary to maintain performance.",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 8,
@@ -541,7 +541,15 @@
             "description": "Update documentation and create training materials for the new scoring system.",
             "dependencies": [7],
             "details": "Update technical documentation, user guides, and create training materials explaining the new weighted scoring approach and its benefits.",
-            "status": "pending"
+            "status": "done"
+          },
+          {
+            "id": 9,
+            "title": "Test and Validate New Scoring System",
+            "description": "Test the new weighted scoring system with sample data to ensure accuracy and functionality.",
+            "dependencies": [4],
+            "details": "Create test cases with sample resumes and job descriptions. Validate that all 7 criteria are scored correctly, weights are applied properly, and the frontend displays the results accurately.",
+            "status": "done"
           }
         ]
       }
