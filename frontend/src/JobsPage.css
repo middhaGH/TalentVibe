@@ -136,6 +136,30 @@
 .score-badge.medium { background: linear-gradient(135deg, #ee7752, #e73c7e); }
 .score-badge.low { background: linear-gradient(135deg, #898989, #5c5c5c); }
 
+.score-badge.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.score-badge.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.score-badge.clickable::after {
+    content: '🔍';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.score-badge.clickable:hover::after {
+    opacity: 1;
+}
 
 /* Detailed Analysis Cards */
 .detailed-resumes-list h3 {

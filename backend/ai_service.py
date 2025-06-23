@@ -24,12 +24,22 @@ def analyze_resume_with_ai(job_description, resume_text):
 You are an expert talent acquisition specialist with a keen eye for technical and professional roles. 
 Analyze the following resume against the provided job description and return a JSON object that strictly follows the specified schema.
 
+**Scoring Methodology:**
+- **Skill Match (50 points max)**: Evaluate how well the candidate's technical and soft skills align with job requirements
+- **Experience (30 points max)**: Assess relevant work experience, industry knowledge, and role progression
+- **Logistics (20 points max)**: Consider work authorization, location, notice period, and compensation alignment
+
 **Output Schema:**
 Your entire response MUST be a single JSON object. Do not include any text outside of this JSON.
 The JSON must have the following structure:
 {{
   "candidate_name": "The full name of the candidate as extracted from the resume. Make a best effort to find the name. If it is truly not available, return 'Name Not Found'.",
-  "fit_score": "An integer from 0-100 representing the candidate's overall fit for the role.",
+  "fit_score": "An integer from 0-100 representing the candidate's overall fit for the role (sum of all component scores).",
+  "score_breakdown": {{
+    "skill_score": "An integer from 0-50 representing skill match score",
+    "experience_score": "An integer from 0-30 representing experience score", 
+    "logistics_score": "An integer from 0-20 representing logistics score"
+  }},
   "bucket": "A string categorizing the candidate. Choose from: '🚀 Green-Room Rocket' (top-tier, >90), '⚡ Book-the-Call' (strong candidate, 80-89), '🛠️ Bench Prospect' (potential but with gaps, 65-79), or '🗄️ Swipe-Left Archive' (not a fit, <65).",
   "reasoning": "A concise, one-sentence explanation for the assigned bucket and score.",
   "summary_points": ["An array of 2-3 string bullet points summarizing the candidate's key strengths and experiences relevant to the job."],
@@ -75,6 +85,11 @@ The JSON must have the following structure:
         print(f"An error occurred during AI analysis: {e}")
         error_response = {{
             "fit_score": 0,
+            "score_breakdown": {{
+                "skill_score": 0,
+                "experience_score": 0,
+                "logistics_score": 0
+            }},
             "bucket": "Error",
             "reasoning": "An error occurred during analysis.",
             "summary_points": [],

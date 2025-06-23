@@ -1,0 +1,75 @@
+# How to Clean Up and Restart Backend & Frontend Servers
+
+## 1. Kill Anything Using Port 5000 or 3000
+
+Open PowerShell and run:
+
+```
+# Kill anything using port 5000 (Flask backend)
+$port5000 = netstat -ano | findstr ":5000" | ForEach-Object { $_.Split()[-1] } | Select-Object -Unique
+foreach ($pid in $port5000) { if ($pid -match '^\d+$') { try { Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue } catch {} } }
+
+# Kill anything using port 3000 (React frontend)
+$port3000 = netstat -ano | findstr ":3000" | ForEach-Object { $_.Split()[-1] } | Select-Object -Unique
+foreach ($pid in $port3000) { if ($pid -match '^\d+$') { try { Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue } catch {} } }
+```
+
+---
+
+## 2. Kill All Node.js and Python Processes (for a full clean slate)
+
+```
+# Kill all node.exe (React dev servers)
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+
+# Kill all python.exe (Flask servers)
+Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+```
+
+---
+
+## 3. Start the Backend (Flask)
+
+Open a new PowerShell window/tab and run:
+
+```
+cd B:\Coding\Vibing\OrganizeFiles
+python -m backend
+```
+*(Leave this running in its own terminal window/tab!)*
+
+---
+
+## 4. Start the Frontend (React)
+
+Open another new terminal, then run:
+
+```
+cd B:\Coding\Vibing\OrganizeFiles\frontend
+npm start
+```
+
+---
+
+## All-in-One Script (Advanced)
+
+> This will kill all node/python processes and anything using ports 3000/5000, then start both servers in new terminals.
+
+```
+# Kill anything using port 5000 or 3000
+$ports = 3000,5000
+foreach ($port in $ports) {
+    $pids = netstat -ano | findstr ":$port" | ForEach-Object { $_.Split()[-1] } | Select-Object -Unique
+    foreach ($pid in $pids) { if ($pid -match '^\d+$') { try { Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue } catch {} } }
+}
+# Kill all node and python processes
+Get-Process node,python -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+# Start backend
+Start-Process powershell -ArgumentList 'cd B:\Coding\Vibing\OrganizeFiles; python -m backend'
+# Start frontend
+Start-Process powershell -ArgumentList 'cd B:\Coding\Vibing\OrganizeFiles\frontend; npm start'
+```
+
+---
+
+**If you hit any errors, copy the output and ask for help!** 

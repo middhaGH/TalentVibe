@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import FeedbackModal from './components/FeedbackModal';
 import InterviewModal from './components/InterviewModal';
+import FitScoreModal from './components/FitScoreModal';
 import './JobsPage.css';
 
 const SkillMatrix = ({ skills }) => (
@@ -56,6 +57,8 @@ const JobDetailsPage = () => {
     const [selectedResumeForFeedback, setSelectedResumeForFeedback] = useState(null);
     const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
     const [selectedResumeForInterview, setSelectedResumeForInterview] = useState(null);
+    const [isFitScoreModalOpen, setIsFitScoreModalOpen] = useState(false);
+    const [selectedResumeForFitScore, setSelectedResumeForFitScore] = useState(null);
     const detailsRef = useRef(null);
 
     useEffect(() => {
@@ -163,6 +166,12 @@ const JobDetailsPage = () => {
         return `bucket-${bucketName}`;
     };
 
+    const handleFitScoreClick = (resume, event) => {
+        event.stopPropagation(); // Prevent row selection
+        setSelectedResumeForFitScore(resume);
+        setIsFitScoreModalOpen(true);
+    };
+
     if (isLoading) return <div className="job-details-container"><p>Loading job details...</p></div>;
     if (error) return <div className="job-details-container message error">Error: {error}</div>;
     if (!jobDetails) return <div className="job-details-container"><p>Job not found.</p></div>;
@@ -195,7 +204,11 @@ const JobDetailsPage = () => {
                                     <td><strong>{index + 1}</strong></td>
                                     <td>{resume.candidate_name || resume.filename}</td>
                                     <td>
-                                        <span className={`score-badge ${getScoreClass(resume.analysis?.fit_score)}`}>
+                                        <span 
+                                            className={`score-badge ${getScoreClass(resume.analysis?.fit_score)} clickable`}
+                                            onClick={(e) => handleFitScoreClick(resume, e)}
+                                            title="Click to view detailed breakdown"
+                                        >
                                             {resume.analysis?.fit_score || 'N/A'}
                                         </span>
                                     </td>
@@ -265,6 +278,12 @@ const JobDetailsPage = () => {
                 resume={selectedResumeForInterview}
                 jobId={jobId}
                 onInterviewCreated={handleInterviewCreated}
+            />
+
+            <FitScoreModal
+                isOpen={isFitScoreModalOpen}
+                onClose={() => setIsFitScoreModalOpen(false)}
+                resume={selectedResumeForFitScore}
             />
         </div>
     );
