@@ -78,3 +78,6 @@ frontend/coverage/
 # OS-generated files
 .DS_Store
 Thumbs.db
+
+# Ignore local Cursor MCP config (contains secrets)
+.cursor/mcp.json
