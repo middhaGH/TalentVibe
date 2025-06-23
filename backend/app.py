@@ -21,9 +21,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)  # This will enable CORS for all routes
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Global variables for tracking job completion
-job_completion_trackers = {}  # job_id -> {total_resumes, completed_resumes}
-
 # --- Database Configuration ---
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'resumes.db')
@@ -184,25 +181,30 @@ def handle_connect():
 def handle_disconnect():
     print('Client disconnected')
 
-def emit_progress_update(job_id, message, progress_type='info'):
-    """Emit progress updates to connected clients"""
-    socketio.emit('progress_update', {
+def emit_progress_update(job_id, message, progress_type='info', progress_data=None):
+    """Emit progress updates to connected clients with optional progress data"""
+    update_data = {
         'job_id': job_id,
         'message': message,
         'type': progress_type,
         'timestamp': time.time()
-    })
+    }
+    
+    # Add progress data if provided
+    if progress_data:
+        update_data['progress'] = {
+            'completed': progress_data.get('completed', 0),
+            'total': progress_data.get('total', 0),
+            'errors': progress_data.get('errors', 0),
+            'percentage': round((progress_data.get('completed', 0) / max(progress_data.get('total', 1), 1)) * 100, 1)
+        }
+    
+    socketio.emit('progress_update', update_data)
 
 def check_job_completion(job_id):
     """Check if all resumes for a job are complete and emit completion event"""
-    if job_id in job_completion_trackers:
-        tracker = job_completion_trackers[job_id]
-        tracker['completed_resumes'] += 1
-        
-        if tracker['completed_resumes'] >= tracker['total_resumes']:
-            emit_progress_update(job_id, "All resumes processed successfully!", 'complete')
-            # Clean up tracker
-            del job_completion_trackers[job_id]
+    # This function is now handled by the progress tracking in tasks.py
+    pass
 
 def process_resume_with_progress(job_id, resume_file, job_description):
     """Process a single resume with progress updates"""
@@ -337,10 +339,10 @@ def analyze_resumes():
         })
 
     # Initialize completion tracker for this job
-    job_completion_trackers[job.id] = {
-        'total_resumes': len(resumes_data),
-        'completed_resumes': 0
-    }
+    # Removed: job_completion_trackers[job.id] = {
+    #     'total_resumes': len(resumes_data),
+    #     'completed_resumes': 0
+    # }
 
     # Queue background job using Celery
     process_job_resumes.delay(job.id, resumes_data, job_description)

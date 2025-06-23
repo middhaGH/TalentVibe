@@ -245,13 +245,18 @@ const JobDetailsPage = () => {
                                 >
                                     💬 Provide Feedback
                                 </button>
-                                <span className={`score-badge large ${getScoreClass(selectedResume.analysis?.fit_score)}`}>
+                                <span 
+                                    className={`score-badge large ${getScoreClass(selectedResume.analysis?.fit_score)} clickable`}
+                                    onClick={(e) => handleFitScoreClick(selectedResume, e)}
+                                    title="Click to view detailed breakdown"
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     FIT SCORE: {selectedResume.analysis?.fit_score || 'N/A'} / 100
                                 </span>
                             </div>
                         </div>
                         <p className="reasoning">{selectedResume.analysis?.reasoning}</p>
-                        <div className="summary-points">
+                        <div className="summary-section glass-summary">
                             <h4>Summary</h4>
                             <ul>
                                 {selectedResume.analysis?.summary_points?.map((point, i) => <li key={`sum-${i}`}>{point}</li>)}

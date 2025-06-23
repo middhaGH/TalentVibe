@@ -12,6 +12,7 @@ const UploadPage = () => {
     const [analysisResult, setAnalysisResult] = useState(null);
     const [progressUpdates, setProgressUpdates] = useState([]);
     const [currentJobId, setCurrentJobId] = useState(null);
+    const [progressData, setProgressData] = useState(null);
     const navigate = useNavigate();
     const socketRef = useRef(null);
 
@@ -26,6 +27,11 @@ const UploadPage = () => {
         socketRef.current.on('progress_update', (data) => {
             console.log('Progress update:', data);
             setProgressUpdates(prev => [...prev, data]);
+            
+            // Update progress data if available
+            if (data.progress) {
+                setProgressData(data.progress);
+            }
             
             // Auto-navigate when analysis is complete
             if (data.type === 'complete' && currentJobId) {
@@ -84,6 +90,7 @@ const UploadPage = () => {
         setAnalysisResult(null);
         setMessage('');
         setProgressUpdates([]);
+        setProgressData(null);
 
         setTimeout(async () => {
             const formData = new FormData();
@@ -103,7 +110,7 @@ const UploadPage = () => {
                 setCurrentJobId(data.job_id);
 
                 if (response.ok) {
-                    setMessage(`Analysis queued successfully! ${data.total_resumes} resumes are being processed in the background. You'll be redirected when complete.`);
+                    setMessage(`Analysis queued successfully! ${data.total_resumes} resumes are being processed in parallel. You'll be redirected when complete.`);
                 } else {
                     throw new Error(data.error || 'An error occurred during analysis.');
                 }
@@ -179,33 +186,51 @@ const UploadPage = () => {
                     </button>
                 </form>
                 
-                {/* Real-time Progress Updates */}
-                {isAnalyzing && progressUpdates.length > 0 && (
-                    <div className="progress-updates">
-                        <h4>Analysis Progress</h4>
-                        <div className="progress-list">
-                            {progressUpdates.map((update, index) => (
-                                <div key={index} className={`progress-item ${getProgressTypeClass(update.type)}`}>
-                                    <span className="progress-message">{update.message}</span>
-                                    <span className="progress-time">
-                                        {new Date(update.timestamp * 1000).toLocaleTimeString()}
+                {/* Single Progress Bar with Liquid Glass Design */}
+                {isAnalyzing && progressData && (
+                    <div className="progress-container">
+                        <div className="liquid-glass-progress">
+                            <div className="progress-header">
+                                <h4>Analysis Progress</h4>
+                                <div className="progress-stats">
+                                    <span className="progress-count">
+                                        {progressData.completed} / {progressData.total}
+                                    </span>
+                                    <span className="progress-percentage">
+                                        {progressData.percentage}%
                                     </span>
                                 </div>
-                            ))}
+                            </div>
+                            <div className="progress-bar-container">
+                                <div 
+                                    className="progress-bar-fill"
+                                    style={{ width: `${progressData.percentage}%` }}
+                                ></div>
+                            </div>
+                            {progressData.errors > 0 && (
+                                <div className="progress-errors">
+                                    <span className="error-count">⚠️ {progressData.errors} errors</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+                
+                {/* Latest Progress Message */}
+                {isAnalyzing && progressUpdates.length > 0 && (
+                    <div className="latest-progress">
+                        <div className={`progress-message ${getProgressTypeClass(progressUpdates[progressUpdates.length - 1].type)}`}>
+                            {progressUpdates[progressUpdates.length - 1].message}
                         </div>
                     </div>
                 )}
                 
                 {message && <p className={`message ${message.startsWith('Error') ? 'error' : 'success'}`}>{message}</p>}
                 
-                {analysisResult && analysisResult.skipped_files && analysisResult.skipped_files.length > 0 && (
-                    <div className="skipped-files-report">
-                        <h4>Skipped Files Report</h4>
-                        <ul>
-                            {analysisResult.skipped_files.map((file, index) => (
-                                <li key={index}><strong>{file.filename}</strong> - {file.reason}</li>
-                            ))}
-                        </ul>
+                {analysisResult && (
+                    <div className="analysis-result">
+                        <h3>Analysis Result</h3>
+                        <pre>{JSON.stringify(analysisResult, null, 2)}</pre>
                     </div>
                 )}
             </div>
