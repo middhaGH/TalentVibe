@@ -198,27 +198,48 @@
 
 .breakdown-item {
     padding: 20px;
-    background: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     border-radius: 12px;
     border: 1px solid #e2e8f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.breakdown-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.breakdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .breakdown-label {
     font-weight: 600;
     color: #333;
-    margin-bottom: 10px;
     font-size: 1rem;
+}
+
+.breakdown-weight {
+    font-size: 0.8rem;
+    color: #666;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
 }
 
 .breakdown-score {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 5px;
     margin-bottom: 10px;
 }
 
 .score-value {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #333;
 }
@@ -233,12 +254,25 @@
     background-color: #e2e8f0;
     border-radius: 4px;
     overflow: hidden;
+    margin-bottom: 8px;
 }
 
 .breakdown-fill {
     height: 100%;
-    transition: width 0.3s ease;
     border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.breakdown-reasoning {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.4;
+    font-style: italic;
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+    border-left: 3px solid #3b82f6;
 }
 
 .skill-analysis-section {

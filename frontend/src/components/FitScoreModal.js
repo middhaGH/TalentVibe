@@ -21,9 +21,24 @@ const FitScoreModal = ({ isOpen, onClose, resume }) => {
         return 'poor';
     };
 
-    const hasScoreBreakdown = scoreBreakdown.skill_score !== undefined || 
-                             scoreBreakdown.experience_score !== undefined || 
-                             scoreBreakdown.logistics_score !== undefined;
+    // New 7-criteria scoring system
+    const criteriaConfig = [
+        { key: 'skills_score', label: 'Skills & Qualifications', max: 40, weight: '40%' },
+        { key: 'experience_score', label: 'Work Experience', max: 25, weight: '25%' },
+        { key: 'leadership_score', label: 'Leadership & Impact', max: 10, weight: '10%' },
+        { key: 'education_score', label: 'Education', max: 5, weight: '5%' },
+        { key: 'certifications_score', label: 'Certifications & Training', max: 10, weight: '10%' },
+        { key: 'resume_quality_score', label: 'Resume Quality & Extras', max: 5, weight: '5%' },
+        { key: 'logistics_score', label: 'Logistics', max: 5, weight: '5%' }
+    ];
+
+    const hasNewScoreBreakdown = criteriaConfig.some(criteria => 
+        scoreBreakdown[criteria.key] !== undefined
+    );
+
+    const hasOldScoreBreakdown = scoreBreakdown.skill_score !== undefined || 
+                                scoreBreakdown.experience_score !== undefined || 
+                                scoreBreakdown.logistics_score !== undefined;
 
     return (
         <div className="fit-score-modal-overlay" onClick={onClose}>
@@ -55,9 +70,41 @@ const FitScoreModal = ({ isOpen, onClose, resume }) => {
                         </div>
                     </div>
 
-                    {hasScoreBreakdown ? (
+                    {hasNewScoreBreakdown ? (
                         <div className="score-breakdown-section">
-                            <h4>Score Breakdown</h4>
+                            <h4>Weighted Score Breakdown</h4>
+                            <div className="breakdown-grid">
+                                {criteriaConfig.map((criteria, index) => (
+                                    <div key={criteria.key} className="breakdown-item">
+                                        <div className="breakdown-header">
+                                            <div className="breakdown-label">{criteria.label}</div>
+                                            <div className="breakdown-weight">({criteria.weight})</div>
+                                        </div>
+                                        <div className="breakdown-score">
+                                            <span className="score-value">{scoreBreakdown[criteria.key] || 'N/A'}</span>
+                                            <span className="score-max">/ {criteria.max}</span>
+                                        </div>
+                                        <div className="breakdown-bar">
+                                            <div 
+                                                className="breakdown-fill" 
+                                                style={{ 
+                                                    width: `${((scoreBreakdown[criteria.key] || 0) / criteria.max) * 100}%`,
+                                                    backgroundColor: getScoreColor(scoreBreakdown[criteria.key] || 0)
+                                                }}
+                                            ></div>
+                                        </div>
+                                        {scoreBreakdown[`${criteria.key}_reasoning`] && (
+                                            <div className="breakdown-reasoning">
+                                                {scoreBreakdown[`${criteria.key}_reasoning`]}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : hasOldScoreBreakdown ? (
+                        <div className="score-breakdown-section">
+                            <h4>Legacy Score Breakdown</h4>
                             <div className="breakdown-grid">
                                 <div className="breakdown-item">
                                     <div className="breakdown-label">Skill Match</div>
@@ -117,7 +164,7 @@ const FitScoreModal = ({ isOpen, onClose, resume }) => {
                             <div className="no-breakdown-message">
                                 <p>📊 Detailed score breakdown is not available for this analysis.</p>
                                 <p>This resume was analyzed before the detailed scoring feature was implemented. 
-                                New resume analyses will include a complete breakdown of skill match, experience, and logistics scores.</p>
+                                New resume analyses will include a complete breakdown of all scoring criteria.</p>
                             </div>
                         </div>
                     )}

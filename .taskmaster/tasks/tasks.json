@@ -509,15 +509,15 @@
             "description": "Modify the JSON response structure to include all 7 scoring categories.",
             "dependencies": [3],
             "details": "Update the score_breakdown structure in the AI response to include all 7 weighted categories instead of the current 3. Ensure backward compatibility with existing frontend components.",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 5,
             "title": "Update Frontend Score Display",
-            "description": "Modify the FitScoreModal to display the new weighted score breakdown.",
-            "dependencies": [4],
-            "details": "Update the FitScoreModal component to show all 7 scoring categories with their individual scores and weights. Ensure the visual design clearly shows the weighted nature of the scoring.",
-            "status": "pending"
+            "description": "Update the frontend components to display the new 7-criteria weighted scoring system.",
+            "dependencies": [3],
+            "details": "Update FitScoreModal.js to display the new scoring criteria with weights and reasoning. Update CSS for better layout and visual hierarchy.",
+            "status": "done"
           },
           {
             "id": 6,
