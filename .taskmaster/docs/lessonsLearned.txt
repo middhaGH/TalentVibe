@@ -63,6 +63,133 @@ The existing fit score system uses a simplified 3-criteria approach:
 - More comprehensive skill assessment
 - Better differentiation between candidate tiers
 
+### Subtask 2: Design New Weighted Scoring Schema
+
+**New 7-Criteria Weighted Scoring System:**
+
+**1. Skills & Qualifications (40% - 40 points max)**
+- **Excellent (36-40 points)**: All required skills present with advanced proficiency, plus bonus skills
+- **Strong (28-35 points)**: All required skills present with good proficiency
+- **Good (20-27 points)**: Most required skills present, some gaps in advanced areas
+- **Fair (12-19 points)**: Basic required skills present, significant gaps
+- **Poor (0-11 points)**: Missing critical required skills
+
+**Evaluation Criteria:**
+- Technical skills alignment with job requirements
+- Programming languages, frameworks, tools proficiency
+- Soft skills (communication, teamwork, problem-solving)
+- Industry-specific knowledge
+- Skill depth vs. breadth assessment
+
+**2. Work Experience (25% - 25 points max)**
+- **Excellent (23-25 points)**: 8+ years relevant experience, senior roles, industry expertise
+- **Strong (18-22 points)**: 5-7 years relevant experience, mid-level roles
+- **Good (13-17 points)**: 3-4 years relevant experience, some relevant roles
+- **Fair (8-12 points)**: 1-2 years relevant experience, entry-level roles
+- **Poor (0-7 points)**: No relevant experience or very limited experience
+
+**Evaluation Criteria:**
+- Years of relevant experience
+- Role progression and career growth
+- Industry relevance and domain expertise
+- Project complexity and scope
+- Impact and achievements in previous roles
+
+**3. Leadership & Impact (10% - 10 points max)**
+- **Excellent (9-10 points)**: Team leadership, project ownership, mentoring, strategic impact
+- **Strong (7-8 points)**: Some leadership experience, project coordination
+- **Good (5-6 points)**: Team collaboration, some project responsibility
+- **Fair (3-4 points)**: Basic teamwork, limited leadership exposure
+- **Poor (0-2 points)**: No leadership experience, individual contributor only
+
+**Evaluation Criteria:**
+- Team leadership and management experience
+- Project ownership and coordination
+- Mentoring and knowledge sharing
+- Cross-functional collaboration
+- Strategic thinking and decision-making
+
+**4. Education (5% - 5 points max)**
+- **Excellent (5 points)**: Advanced degree (Master's/PhD) in relevant field
+- **Strong (4 points)**: Bachelor's degree in relevant field
+- **Good (3 points)**: Bachelor's degree in related field
+- **Fair (2 points)**: Associate's degree or some college
+- **Poor (0-1 points)**: High school only or unrelated education
+
+**Evaluation Criteria:**
+- Degree level and relevance to role
+- Institution quality and reputation
+- Academic performance (GPA, honors)
+- Continuing education and learning
+
+**5. Certifications & Training (10% - 10 points max)**
+- **Excellent (9-10 points)**: Multiple relevant certifications, specialized training
+- **Strong (7-8 points)**: Several relevant certifications
+- **Good (5-6 points)**: Some relevant certifications or training
+- **Fair (3-4 points)**: Basic certifications or limited training
+- **Poor (0-2 points)**: No relevant certifications or training
+
+**Evaluation Criteria:**
+- Professional certifications (AWS, Azure, PMP, etc.)
+- Technical certifications (Cisco, Microsoft, etc.)
+- Industry-specific training and courses
+- Bootcamps and specialized programs
+- Ongoing professional development
+
+**6. Resume Quality & Extras (5% - 5 points max)**
+- **Excellent (5 points)**: Outstanding formatting, clear achievements, impressive extras
+- **Strong (4 points)**: Good formatting, clear structure, some extras
+- **Good (3 points)**: Acceptable formatting, basic structure
+- **Fair (2 points)**: Poor formatting, unclear structure
+- **Poor (0-1 points)**: Very poor formatting, difficult to read
+
+**Evaluation Criteria:**
+- Resume formatting and presentation
+- Clarity of achievements and responsibilities
+- Grammar, spelling, and professional language
+- Portfolio, projects, or open source contributions
+- Awards, publications, or speaking engagements
+
+**7. Logistics (5% - 5 points max)**
+- **Excellent (5 points)**: Perfect alignment (location, authorization, notice period)
+- **Strong (4 points)**: Good alignment with minor considerations
+- **Good (3 points)**: Acceptable alignment with some flexibility
+- **Fair (2 points)**: Some logistical challenges
+- **Poor (0-1 points)**: Significant logistical barriers
+
+**Evaluation Criteria:**
+- Work authorization status
+- Location compatibility (remote/hybrid/onsite)
+- Notice period and availability
+- Compensation expectations alignment
+- Relocation willingness if applicable
+
+**Scoring Calculation:**
+- Each category is scored independently (0 to max points)
+- Weighted scores are calculated: (Category Score / Max Points) × Weight Percentage
+- Final fit score = Sum of all weighted scores
+- Total possible score = 100 points
+
+**Bucket Classification:**
+- **🚀 Green-Room Rocket (90-100)**: Exceptional candidates, immediate consideration
+- **⚡ Book-the-Call (80-89)**: Strong candidates, schedule interview
+- **🛠️ Bench Prospect (65-79)**: Potential candidates, consider for future roles
+- **🗄️ Swipe-Left Archive (0-64)**: Not a fit, archive for future reference
+
+**Edge Cases and Special Considerations:**
+- **Career Changers**: Weight experience differently, focus on transferable skills
+- **Recent Graduates**: Emphasize education and certifications over experience
+- **Senior Roles**: Increase weight on leadership and strategic impact
+- **Technical Roles**: Emphasize skills and certifications over soft skills
+- **Management Roles**: Emphasize leadership and experience over technical skills
+
+**Implementation Notes:**
+- AI should evaluate each category independently
+- Provide specific reasoning for each category score
+- Consider role-specific adjustments to weights
+- Maintain consistency across similar roles
+- Document any special circumstances or exceptions
+
 ---
 
 ## Task 9: Parallel Processing & Enhanced Progress Bar

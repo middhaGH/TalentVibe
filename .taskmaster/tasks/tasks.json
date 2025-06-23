@@ -493,7 +493,7 @@
             "description": "Create the detailed scoring schema with the 7 weighted criteria.",
             "dependencies": [1],
             "details": "Define scoring criteria: Skills & Qualifications (40%), Work Experience (25%), Leadership & Impact (10%), Education (5%), Certifications & Training (10%), Resume Quality & Extras (5%), Logistics (5%). Create detailed scoring guidelines for each category.",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 3,
