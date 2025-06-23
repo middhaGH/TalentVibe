@@ -1,5 +1,70 @@
 # Lessons Learned - TalentVibe Development
 
+## Task 20: Weighted Fit Score Algorithm Implementation
+
+### Subtask 1: Analysis of Current Scoring System
+
+**Current System Analysis:**
+The existing fit score system uses a simplified 3-criteria approach:
+- **Skills & Qualifications (50 points max)**: Technical and soft skills alignment
+- **Experience (30 points max)**: Work experience, industry knowledge, role progression  
+- **Logistics (20 points max)**: Work authorization, location, notice period, compensation
+
+**Identified Limitations:**
+
+1. **Oversimplified Weighting**:
+   - Current system treats skills as 50% of the decision, which is too high
+   - Experience at 30% undervalues the importance of proven track record
+   - Logistics at 20% is reasonable but could be more nuanced
+
+2. **Missing Critical Factors**:
+   - **Leadership & Impact**: No consideration for team leadership, project ownership, mentoring
+   - **Education**: Formal degrees and training are not evaluated
+   - **Certifications**: Professional certifications and specialized training ignored
+   - **Resume Quality**: Formatting, clarity, and presentation not considered
+
+3. **Scoring Biases**:
+   - Favors candidates with strong technical skills over leadership potential
+   - Doesn't account for career progression and growth trajectory
+   - Ignores soft skills and cultural fit indicators
+   - No consideration for industry-specific certifications
+
+4. **Real-World Hiring Mismatch**:
+   - Hiring managers typically consider leadership potential as important as technical skills
+   - Education and certifications often serve as initial screening criteria
+   - Resume quality reflects communication skills and attention to detail
+   - Logistics (location, authorization) are often deal-breakers regardless of other factors
+
+**Impact on Candidate Evaluation:**
+- High-scoring candidates may lack leadership potential
+- Low-scoring candidates with strong experience but weaker technical skills are undervalued
+- No differentiation between entry-level and senior positions
+- Missing context for industry-specific requirements
+
+**Technical Implementation Issues:**
+- AI prompt is too rigid and doesn't allow for nuanced evaluation
+- Score breakdown doesn't provide enough detail for hiring decisions
+- No consideration for role-specific weighting adjustments
+- Limited ability to explain scoring decisions to stakeholders
+
+**Recommendations for New System:**
+1. **Skills & Qualifications (40%)**: Still the most important but reduced from 50%
+2. **Work Experience (25%)**: Increased from 30% to better reflect hiring priorities
+3. **Leadership & Impact (10%)**: New category for leadership potential
+4. **Education (5%)**: Formal education consideration
+5. **Certifications & Training (10%)**: Professional development and specialized skills
+6. **Resume Quality & Extras (5%)**: Communication skills and attention to detail
+7. **Logistics (5%)**: Reduced from 20% but still critical for practical considerations
+
+**Expected Benefits:**
+- More nuanced candidate evaluation
+- Better alignment with real-world hiring decisions
+- Improved ability to identify leadership potential
+- More comprehensive skill assessment
+- Better differentiation between candidate tiers
+
+---
+
 ## Task 9: Parallel Processing & Enhanced Progress Bar
 
 ### Issue: Sequential Processing and Poor Progress Tracking
