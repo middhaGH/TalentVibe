@@ -498,10 +498,10 @@
           {
             "id": 3,
             "title": "Update AI Analysis Prompt",
-            "description": "Modify the AI prompt to use the new weighted scoring system.",
+            "description": "Modify the AI prompt in ai_service.py to use the new 7-criteria weighted scoring system.",
             "dependencies": [2],
-            "details": "Update the prompt in ai_service.py to include the new 7-criteria weighted scoring system. Ensure the AI understands how to evaluate each category and apply the correct weights.",
-            "status": "pending"
+            "details": "Update the OpenAI prompt to include the new scoring methodology, scoring ranges, and updated JSON schema with the 7 new score breakdown fields.",
+            "status": "done"
           },
           {
             "id": 4,
