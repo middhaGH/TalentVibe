@@ -1,6 +1,6 @@
 # Lessons Learned - TalentVibe Development
 
-## Task 8: Parallel Processing & Progress Bar Improvements
+## Task 9: Parallel Processing & Enhanced Progress Bar
 
 ### Issue: Sequential Processing and Poor Progress Tracking
 **Problem**: 
@@ -15,8 +15,8 @@
 
 **Solution Applied**:
 1. **Parallel Processing Implementation**:
-   - Updated `tasks.py` to use Celery's `group` functionality for true parallel execution
-   - Each resume now gets its own task that runs independently
+   - Updated `tasks.py` to use ThreadPoolExecutor for true parallel execution
+   - Each resume now gets its own thread that runs independently
    - Added thread-safe progress tracking with `Lock()` to prevent race conditions
    - Progress data now includes: `completed`, `total`, `errors`, `percentage`
 
@@ -36,14 +36,12 @@
 **Technical Implementation Details**:
 ```python
 # Backend: Parallel task execution
-resume_tasks = []
-for resume_data in resumes_data:
-    task = process_resume_task.s(job_id, resume_data, job_description)
-    resume_tasks.append(task)
-
-job = group(resume_tasks)
-result = job.apply_async()
-results = result.get()
+max_workers = min(4, total_resumes)
+with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+    future_to_resume = {
+        executor.submit(process_single_resume, job_id, resume_data, job_description): resume_data
+        for resume_data in resumes_data
+    }
 ```
 
 ```javascript
@@ -54,7 +52,7 @@ if (data.progress) {
 ```
 
 **Lessons for Future Development**:
-- **Parallel Processing**: Always use Celery's `group` for independent tasks rather than sequential loops
+- **Parallel Processing**: Use ThreadPoolExecutor for independent tasks rather than sequential loops
 - **Progress Tracking**: Use structured data with percentages rather than individual status messages
 - **Thread Safety**: Use locks when updating shared state in concurrent environments
 - **UI Design**: Single progress bar with clear metrics is better than multiple status updates
@@ -68,10 +66,10 @@ if (data.progress) {
 
 ### Key Lessons:
 
-#### 1. Celery Parallel Execution
-- **Lesson**: Use `group()` for independent tasks, not sequential loops
-- **Best Practice**: Each independent operation should be its own task
-- **Action**: Always consider parallelization when processing multiple items
+#### 1. Celery vs ThreadPoolExecutor
+- **Lesson**: For local development, ThreadPoolExecutor is simpler than Celery
+- **Best Practice**: Use ThreadPoolExecutor when you don't need distributed task processing
+- **Action**: Always consider the complexity vs benefit trade-off for task processing
 
 #### 2. Progress Tracking Design
 - **Lesson**: Users prefer single progress bar over multiple status messages
@@ -97,15 +95,15 @@ if (data.progress) {
 5. **Add Progress Notifications**: Email/SMS notifications when processing completes
 
 ### Task Completion Notes:
-- **Task 8**: Successfully completed with parallel processing and improved progress tracking
+- **Task 9**: Successfully completed with parallel processing and improved progress tracking
 - **Status**: All subtasks marked as done
-- **Next**: Ready to proceed to Task 9 (Industry-Specific Weight Configurations)
+- **Next**: Ready to proceed to Task 10 (Industry-Specific Weight Configurations)
 
 ---
 *Last Updated: 2025-06-23*
 *Documented by: Development Team*
 
-## Task 7: Display Results in Web UI - Name Extraction Issues
+## Task 8: Display Results in Web UI - Name Extraction Issues
 
 ### Issue: Candidate Name Extraction Failing
 **Problem**: The AI was not properly extracting candidate names from resumes, resulting in "Not provided" or "Unknown" values in the UI.
@@ -171,9 +169,9 @@ if (data.progress) {
 4. **Implement Monitoring**: Add logging to track AI response patterns and identify issues early
 
 ### Task Completion Notes:
-- **Task 7**: Successfully completed with improved name extraction
+- **Task 8**: Successfully completed with improved name extraction
 - **Status**: All subtasks marked as done
-- **Next**: Ready to proceed to Task 8 (Multi-Job & Multi-Tenant Support)
+- **Next**: Ready to proceed to Task 9 (Multi-Job & Multi-Tenant Support)
 
 ---
 *Last Updated: 2025-06-21*

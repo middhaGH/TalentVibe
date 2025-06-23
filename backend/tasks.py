@@ -2,6 +2,8 @@ from celery import Celery, group
 import json
 import hashlib
 from threading import Lock
+import concurrent.futures
+import time
 
 # --- Self-Contained Celery Application for Local Development ---
 # This creates a Celery instance that runs tasks synchronously and in-memory.
@@ -10,18 +12,18 @@ celery_app = Celery(
     'tasks',
     broker_url=None,
     result_backend=None,
-    task_always_eager=True
+    task_always_eager=True,
+    task_eager_propagates=True
 )
 
 # Global progress tracking
 progress_lock = Lock()
 job_progress = {}  # {job_id: {'completed': 0, 'total': 0, 'errors': 0}}
 
-@celery_app.task(bind=True)
-def process_resume_task(self, job_id, resume_data, job_description):
+def process_single_resume(job_id, resume_data, job_description):
     """
-    Celery task to process a single resume synchronously.
-    Imports are done inside the task to avoid circular dependencies at startup.
+    Process a single resume synchronously.
+    This function is designed to be called in parallel.
     """
     from backend.app import app, db, Resume, emit_progress_update, check_job_completion
     from backend.ai_service import analyze_resume_with_ai
@@ -36,7 +38,7 @@ def process_resume_task(self, job_id, resume_data, job_description):
                 if job_id not in job_progress:
                     job_progress[job_id] = {'completed': 0, 'total': 0, 'errors': 0}
                 current_progress = job_progress[job_id]
-                current_progress['total'] = max(current_progress['total'], len(resume_data) if isinstance(resume_data, list) else 1)
+                current_progress['total'] = max(current_progress['total'], 1)
             
             emit_progress_update(job_id, f"Processing {filename}...", 'processing', current_progress)
             
@@ -46,7 +48,6 @@ def process_resume_task(self, job_id, resume_data, job_description):
                 with progress_lock:
                     job_progress[job_id]['completed'] += 1
                 emit_progress_update(job_id, f"Skipped {filename}: Duplicate content", 'warning', job_progress[job_id])
-                check_job_completion(job_id)
                 return {'status': 'skipped', 'reason': 'duplicate'}
             
             emit_progress_update(job_id, f"Analyzing {filename} with AI...", 'processing', job_progress[job_id])
@@ -74,7 +75,6 @@ def process_resume_task(self, job_id, resume_data, job_description):
                 current_progress = job_progress[job_id]
             
             emit_progress_update(job_id, f"Completed analysis for {filename}", 'success', current_progress)
-            check_job_completion(job_id)
             
             return {
                 'status': 'success',
@@ -89,14 +89,14 @@ def process_resume_task(self, job_id, resume_data, job_description):
                 job_progress[job_id]['completed'] += 1
                 current_progress = job_progress[job_id]
             emit_progress_update(job_id, error_msg, 'error', current_progress)
-            check_job_completion(job_id)
-            # Do not retry in synchronous mode, just raise the exception
-            raise
+            # Do not retry, just return error
+            return {'status': 'error', 'error': str(e)}
 
 @celery_app.task
 def process_job_resumes(job_id, resumes_data, job_description):
     """
-    Processes multiple resumes for a job in parallel using Celery group.
+    Processes multiple resumes for a job in parallel using ThreadPoolExecutor.
+    This provides true parallel processing without requiring a message broker.
     """
     from backend.app import emit_progress_update
 
@@ -108,19 +108,25 @@ def process_job_resumes(job_id, resumes_data, job_description):
     
     emit_progress_update(job_id, f"Starting parallel processing of {total_resumes} resumes...", 'start', job_progress[job_id])
     
-    # Create a group of tasks for parallel execution
-    # Each resume gets its own task
-    resume_tasks = []
-    for resume_data in resumes_data:
-        task = process_resume_task.s(job_id, resume_data, job_description)
-        resume_tasks.append(task)
+    # Use ThreadPoolExecutor for true parallel processing
+    # Limit to 4 workers to avoid overwhelming the system and database
+    max_workers = min(4, total_resumes)
     
-    # Execute all tasks in parallel using group
-    job = group(resume_tasks)
-    result = job.apply_async()
-    
-    # Wait for all tasks to complete
-    results = result.get()
+    results = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all tasks
+        future_to_resume = {
+            executor.submit(process_single_resume, job_id, resume_data, job_description): resume_data
+            for resume_data in resumes_data
+        }
+        
+        # Collect results as they complete
+        for future in concurrent.futures.as_completed(future_to_resume):
+            try:
+                result = future.result()
+                results.append(result)
+            except Exception as e:
+                results.append({'status': 'error', 'error': str(e)})
     
     # Final progress update
     with progress_lock:
